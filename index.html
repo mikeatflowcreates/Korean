@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한국어 — Korean Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --surface3: #252525;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0ede8;
+    --text2: #9a9690;
+    --text3: #5c5a57;
+    --accent: #c8a97e;
+    --accent2: #8fb8a0;
+    --red: #c47a6a;
+    --blue: #7a9fc4;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Fraunces', serif;
+    --sans: 'Noto Sans KR', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* LAYOUT */
+  .shell { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 0.5px solid var(--border);
+    padding: 2rem 0;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+
+  .logo {
+    padding: 0 1.5rem 2rem;
+    border-bottom: 0.5px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+
+  .logo-ko {
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    display: block;
+  }
+
+  .logo-en {
+    font-family: var(--serif);
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.12em;
+    font-style: italic;
+    display: block;
+    margin-top: 2px;
+  }
+
+  .nav-section {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+    text-transform: uppercase;
+    padding: 0 1.5rem;
+    margin-top: 1.2rem;
+    margin-bottom: 4px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 1.5rem;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text2);
+    font-weight: 300;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    letter-spacing: 0.02em;
+  }
+
+  .nav-item:hover { color: var(--text); background: var(--surface2); }
+  .nav-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--surface2); }
+
+  .nav-icon { font-size: 15px; width: 20px; text-align: center; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 1.5rem;
+    border-top: 0.5px solid var(--border);
+  }
+
+  .streak { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+  .streak span { color: var(--accent); font-size: 16px; font-weight: 500; }
+
+  .main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 3rem 3.5rem;
+    max-width: 900px;
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* SECTION HEADER */
+  .page-header { margin-bottom: 2.5rem; }
+  .page-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .page-sub { font-size: 12px; color: var(--text3); letter-spacing: 0.08em; font-family: var(--mono); }
+
+  /* KEYBOARD */
+  .shift-row { display: flex; gap: 8px; align-items: center; margin-bottom: 1.5rem; }
+  .shift-btn {
+    padding: 5px 14px;
+    font-size: 11px;
+    font-family: var(--mono);
+    border: 0.5px solid var(--border2);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all 0.15s;
+  }
+  .shift-btn.on { background: var(--surface3); color: var(--accent); border-color: var(--accent); }
+  .shift-label { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+
+  .kb-wrap { overflow-x: auto; padding-bottom: 8px; }
+  .kb-row { display: flex; gap: 4px; margin-bottom: 4px; }
+
+  .key {
+    min-width: 52px; height: 52px;
+    border: 0.5px solid var(--border2);
+    border-radius: 6px;
+    background: var(--surface2);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.12s;
+    flex-shrink: 0;
+  }
+  .key:hover { background: var(--surface3); border-color: var(--border2); transform: translateY(-1px); }
+  .key.vowel-key { background: #161e1a; border-color: rgba(143,184,160,0.25); }
+  .key.vowel-key:hover { background: #1c2820; }
+  .key.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+
+  .key .en { font-family: var(--mono); font-size: 8px; color: var(--text3); position: absolute; top: 5px; left: 6px; }
+  .key .ko-main { font-size: 17px; color: var(--text); line-height: 1; }
+  .key.vowel-key .ko-main { color: var(--accent2); }
+  .key .ko-shift { font-size: 9px; color: var(--red); position: absolute; top: 5px; right: 5px; }
+  .key.mod-key { background: var(--surface); min-width: 60px; }
+  .key.mod-key .en { position: static; font-size: 9px; color: var(--text3); }
+  .key.wide { min-width: 74px; }
+  .key.wider { min-width: 90px; }
+  .key.widest { min-width: 110px; }
+  .key.space-key { min-width: 280px; }
+
+  .kb-legend { display: flex; gap: 20px; margin-top: 14px; flex-wrap: wrap; }
+  .kb-leg { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--text3); font-family: var(--mono); }
+  .kb-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* CHAR GRIDS */
+  .section-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    margin-top: 2rem;
+    padding-bottom: 8px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .section-tag:first-child { margin-top: 0; }
+
+  .char-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin-bottom: 1rem; }
+
+  .char-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    transition: border-color 0.15s;
+    cursor: default;
+  }
+  .char-card:hover { border-color: var(--border2); }
+  .char-card .ch { font-size: 26px; color: var(--accent); font-weight: 400; line-height: 1; }
+  .char-card.vowel-card .ch { color: var(--accent2); }
+  .char-card.tense-card { border-color: rgba(196,122,106,0.2); }
+  .char-card.tense-card .ch { color: var(--red); }
+  .char-card .rom { font-family: var(--mono); font-size: 11px; color: var(--text2); margin-top: 5px; }
+  .char-card .tip { font-size: 11px; color: var(--text3); margin-top: 4px; line-height: 1.45; }
+
+  /* PATTERNS */
+  .pattern-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 10px;
+    transition: border-color 0.15s;
+  }
+  .pattern-card:hover { border-color: var(--border2); }
+  .pattern-ko { font-size: 20px; color: var(--accent); font-weight: 400; }
+  .pattern-rom { font-family: var(--mono); font-size: 11px; color: var(--text3); margin-top: 3px; }
+  .pattern-meaning { font-size: 13px; color: var(--text); margin-top: 10px; }
+  .pattern-note {
+    font-size: 12px; color: var(--text2);
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 0.5px solid var(--border);
+    line-height: 1.6;
+  }
+
+  /* SENTENCES */
+  .sentence-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+  }
+  .sentence-en { font-size: 12px; color: var(--text3); font-family: var(--mono); margin-bottom: 8px; }
+  .sentence-ko { font-size: 22px; color: var(--text); font-weight: 400; margin-bottom: 4px; }
+  .sentence-rom { font-family: var(--mono); font-size: 11px; color: var(--text3); margin-bottom: 10px; }
+  .sentence-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+  .sentence-tag {
+    font-size: 10px;
+    font-family: var(--mono);
+    padding: 3px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.04em;
+  }
+  .tag-lit { background: rgba(255,255,255,0.04); color: var(--text3); }
+  .tag-nat { background: rgba(143,184,160,0.08); color: var(--accent2); }
+  .sentence-nuance { font-size: 12px; color: var(--text2); margin-top: 8px; padding-top: 8px; border-top: 0.5px solid var(--border); line-height: 1.6; }
+
+  /* QUIZ */
+  .quiz-meta { display: flex; gap: 20px; margin-bottom: 1.5rem; }
+  .quiz-stat {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-family: var(--mono);
+  }
+  .quiz-stat .label { font-size: 10px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; }
+  .quiz-stat .val { font-size: 20px; color: var(--accent); font-weight: 500; margin-top: 2px; }
+
+  .progress-bar { height: 2px; background: var(--surface3); border-radius: 1px; margin-bottom: 2rem; }
+  .progress-fill { height: 100%; background: var(--accent2); border-radius: 1px; transition: width 0.4s; }
+
+  .quiz-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    min-height: 160px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+
+  .quiz-type { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
+  .quiz-q { font-size: 36px; color: var(--text); font-weight: 400; line-height: 1.2; }
+  .quiz-q.big { font-size: 52px; }
+
+  .quiz-input {
+    width: 100%;
+    max-width: 400px;
+    background: var(--surface2);
+    border: 0.5px solid var(--border2);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 15px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    margin-bottom: 12px;
+    outline: none;
+    transition: border-color 0.15s;
+    text-align: center;
+  }
+  .quiz-input:focus { border-color: var(--accent); }
+
+  .quiz-actions { display: flex; gap: 8px; }
+  .btn {
+    padding: 8px 20px;
+    border: 0.5px solid var(--border2);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text2);
+    font-size: 12px;
+    font-family: var(--mono);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+  }
+  .btn:hover { background: var(--surface3); color: var(--text); }
+  .btn.primary { border-color: var(--accent); color: var(--accent); }
+  .btn.primary:hover { background: rgba(200,169,126,0.08); }
+  .btn.success { border-color: var(--accent2); color: var(--accent2); }
+  .btn.success:hover { background: rgba(143,184,160,0.08); }
+  .btn.danger { border-color: var(--red); color: var(--red); }
+  .btn.danger:hover { background: rgba(196,122,106,0.08); }
+
+  .quiz-feedback {
+    font-family: var(--mono);
+    font-size: 13px;
+    min-height: 22px;
+    margin-top: 10px;
+    text-align: center;
+  }
+  .correct { color: var(--accent2); }
+  .wrong { color: var(--red); }
+
+  /* FLASHCARDS */
+  .fc-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .fc-progress { font-family: var(--mono); font-size: 12px; color: var(--text3); }
+
+  .fc-filters { display: flex; gap: 6px; }
+  .filter-btn {
+    padding: 4px 12px;
+    border: 0.5px solid var(--border);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text3);
+    font-size: 11px;
+    font-family: var(--mono);
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover { color: var(--text2); border-color: var(--border2); }
+  .filter-btn.active { color: var(--accent); border-color: rgba(200,169,126,0.4); background: rgba(200,169,126,0.05); }
+
+  .card-scene {
+    perspective: 1000px;
+    width: 100%;
+    height: 300px;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .card-scene.flipped .card-inner { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    gap: 10px;
+    transition: border-color 0.2s;
+  }
+  .card-face.back { transform: rotateY(180deg); }
+  .card-scene:hover .card-face { border-color: var(--border2); }
+
+  .fc-stage-label {
+    position: absolute;
+    top: 14px; left: 16px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    text-transform: uppercase;
+  }
+
+  .fc-type-label {
+    position: absolute;
+    top: 14px; right: 16px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    text-transform: uppercase;
+    border: 0.5px solid var(--border);
+    border-radius: 3px;
+    padding: 2px 6px;
+  }
+
+  .fc-tap-hint {
+    position: absolute;
+    bottom: 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+  }
+
+  .fc-korean { font-size: 52px; font-weight: 300; color: var(--text); line-height: 1.1; }
+
+  .fc-english { font-size: 22px; font-weight: 400; color: var(--text); }
+  .fc-roman { font-family: var(--mono); font-size: 13px; color: var(--blue); font-style: italic; }
+  .fc-literal { font-size: 12px; color: var(--text3); }
+  .fc-nuance {
+    font-size: 12px;
+    color: var(--text2);
+    text-align: center;
+    max-width: 400px;
+    line-height: 1.6;
+    margin-top: 4px;
+    padding-top: 10px;
+    border-top: 0.5px solid var(--border);
+  }
+
+  .fc-divider { width: 32px; height: 0.5px; background: var(--border); }
+
+  .fc-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .fc-shuffle {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.15s;
+    letter-spacing: 0.04em;
+  }
+  .fc-shuffle:hover { color: var(--text2); }
+
+  /* VOCAB BANK */
+  .bank-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .bank-count { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+
+  .bank-stage { margin-bottom: 2rem; }
+
+  .bank-stage-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .vocab-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .vocab-table thead th {
+    text-align: left;
+    padding: 7px 10px;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-weight: 400;
+  }
+  .vocab-table tbody tr { border-top: 0.5px solid var(--border); transition: background 0.1s; }
+  .vocab-table tbody tr:hover { background: var(--surface); }
+  .vocab-table td { padding: 9px 10px; vertical-align: top; }
+
+  .td-kor { font-size: 20px; font-weight: 300; color: var(--text); width: 120px; }
+  .td-rom { font-family: var(--mono); font-size: 11px; color: var(--blue); font-style: italic; width: 150px; }
+  .td-eng { color: var(--text2); width: 180px; font-size: 12px; }
+  .td-lit { color: var(--text3); font-size: 11px; }
+
+  .type-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+  .badge-noun     { background: rgba(122,159,196,0.1);  color: var(--blue); border: 0.5px solid rgba(122,159,196,0.25); }
+  .badge-verb     { background: rgba(143,184,160,0.1);  color: var(--accent2); border: 0.5px solid rgba(143,184,160,0.25); }
+  .badge-pronoun  { background: rgba(255,255,255,0.04); color: var(--text3); border: 0.5px solid var(--border); }
+  .badge-phrase   { background: rgba(196,122,106,0.08); color: var(--red); border: 0.5px solid rgba(196,122,106,0.2); }
+
+  /* SHARED */
+  .divider { height: 0.5px; background: var(--border); margin: 2rem 0; }
+
+  .stage-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    border: 0.5px solid rgba(200,169,126,0.3);
+    border-radius: 3px;
+    padding: 2px 7px;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo">
+      <span class="logo-ko">한국어</span>
+      <span class="logo-en">daily study</span>
+    </div>
+    <nav>
+      <div class="nav-section">reference</div>
+      <div class="nav-item active" onclick="show('keyboard', this)"><span class="nav-icon">⌨</span> Keyboard</div>
+      <div class="nav-item" onclick="show('vowels', this)"><span class="nav-icon">ㅏ</span> Vowels</div>
+      <div class="nav-item" onclick="show('consonants', this)"><span class="nav-icon">ㄱ</span> Consonants</div>
+      <div class="nav-item" onclick="show('patterns', this)"><span class="nav-icon">▤</span> Patterns</div>
+      <div class="nav-item" onclick="show('sentences', this)"><span class="nav-icon">文</span> Sentences</div>
+      <div class="nav-section">practice</div>
+      <div class="nav-item" onclick="show('flashcards', this)"><span class="nav-icon">⟳</span> Flashcards</div>
+      <div class="nav-item" onclick="show('vocab', this)"><span class="nav-icon">목</span> Vocab Bank</div>
+      <div class="nav-item" onclick="show('quiz', this)"><span class="nav-icon">◈</span> Quiz</div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="streak">streak<br><span id="streak-count">0</span> days</div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- KEYBOARD -->
+    <div id="keyboard" class="panel active">
+      <div class="page-header">
+        <div class="page-title">2-Set keyboard</div>
+        <div class="page-sub">한글 2벌식 — consonants left · vowels right</div>
+      </div>
+      <div class="shift-row">
+        <span class="shift-label">view:</span>
+        <button class="shift-btn on" id="btn-n" onclick="setShift(false)">normal</button>
+        <button class="shift-btn" id="btn-s" onclick="setShift(true)">shift — tense</button>
+      </div>
+      <div class="kb-wrap" id="kb-wrap"></div>
+      <div class="kb-legend">
+        <div class="kb-leg"><div class="kb-dot" style="background:#161e1a;border:0.5px solid rgba(143,184,160,0.3)"></div>vowel (right hand)</div>
+        <div class="kb-leg"><div class="kb-dot" style="background:#1e1e1e;border:0.5px solid rgba(255,255,255,0.12)"></div>consonant (left hand)</div>
+        <div class="kb-leg"><div class="kb-dot" style="background:rgba(196,122,106,0.15);border:0.5px solid rgba(196,122,106,0.4)"></div>tense — shift</div>
+      </div>
+      <div class="divider"></div>
+      <div style="font-size:12px;color:var(--text3);line-height:1.8;font-family:var(--mono);">
+        typing logic: consonant (left) → vowel (right) → auto-combines into a syllable block<br>
+        받침 (final consonant): type a second consonant after the vowel — it slots underneath<br>
+        example: ㅁ + ㅓ + ㄱ → 먹 · ㅎ + ㅏ + ㄴ + ㄱ + ㅜ + ㄱ → 한국
+      </div>
+    </div>
+
+    <!-- VOWELS -->
+    <div id="vowels" class="panel">
+      <div class="page-header">
+        <div class="page-title">Vowels <span class="stage-badge">모음</span></div>
+        <div class="page-sub">21 vowels — basic 8 + y-forms + compounds</div>
+      </div>
+      <div class="section-tag">basic vowels</div>
+      <div class="char-grid" id="vb"></div>
+      <div class="section-tag">y-onset vowels</div>
+      <div class="char-grid" id="vy"></div>
+      <div class="section-tag">compound vowels — two vowels fused</div>
+      <div class="char-grid" id="vc"></div>
+    </div>
+
+    <!-- CONSONANTS -->
+    <div id="consonants" class="panel">
+      <div class="page-header">
+        <div class="page-title">Consonants <span class="stage-badge">자음</span></div>
+        <div class="page-sub">19 consonants — plain · aspirated · tense</div>
+      </div>
+      <div class="section-tag">plain consonants</div>
+      <div class="char-grid" id="cb"></div>
+      <div class="section-tag">aspirated — strong burst of air</div>
+      <div class="char-grid" id="ca"></div>
+      <div class="section-tag">tense — shift key · no air burst · held throat</div>
+      <div class="char-grid" id="ct"></div>
+    </div>
+
+    <!-- PATTERNS -->
+    <div id="patterns" class="panel">
+      <div class="page-header">
+        <div class="page-title">Sentence patterns <span class="stage-badge">Stage 1</span></div>
+        <div class="page-sub">core skeletons — slot different words in yourself</div>
+      </div>
+      <div id="pattern-list"></div>
+      <div class="divider"></div>
+      <div class="section-tag">syllable block logic</div>
+      <div class="pattern-card">
+        <div class="pattern-ko">초성 + 중성 + 종성</div>
+        <div class="pattern-rom">initial consonant + vowel + final consonant (optional)</div>
+        <div class="pattern-meaning">Every Korean syllable is one block. You type left to right — the system stacks automatically.</div>
+        <div class="pattern-note">Like Cantonese syllable structure: onset + nucleus + coda.<br>먹 = ㅁ(m) + ㅓ(eo) + ㄱ(k) · 한 = ㅎ(h) + ㅏ(a) + ㄴ(n)<br>받침 = the bottom consonant. Its presence determines 이에요 vs 예요.</div>
+      </div>
+    </div>
+
+    <!-- SENTENCES -->
+    <div id="sentences" class="panel">
+      <div class="page-header">
+        <div class="page-title">Example sentences <span class="stage-badge">Stage 1</span></div>
+        <div class="page-sub">real casual Korean — how natives actually say it</div>
+      </div>
+      <div id="sentence-list"></div>
+    </div>
+
+    <!-- FLASHCARDS -->
+    <div id="flashcards" class="panel">
+      <div class="page-header">
+        <div class="page-title">Flashcards</div>
+        <div class="page-sub">tap to flip — mark got it or again</div>
+      </div>
+      <div class="fc-controls">
+        <span class="fc-progress" id="fc-prog">Card 1 of —</span>
+        <div class="fc-filters">
+          <button class="filter-btn active" onclick="fcFilter('all',this)">All</button>
+          <button class="filter-btn" onclick="fcFilter('noun',this)">Nouns</button>
+          <button class="filter-btn" onclick="fcFilter('verb',this)">Verbs</button>
+          <button class="filter-btn" onclick="fcFilter('pronoun',this)">Pronouns</button>
+        </div>
+      </div>
+      <div class="card-scene" id="fc-scene" onclick="fcFlip()">
+        <div class="card-inner" id="fc-inner">
+          <div class="card-face front">
+            <span class="fc-stage-label" id="fc-stage"></span>
+            <span class="fc-type-label" id="fc-type"></span>
+            <div class="fc-korean" id="fc-kor"></div>
+            <span class="fc-tap-hint">tap to reveal</span>
+          </div>
+          <div class="card-face back">
+            <span class="fc-stage-label" id="fc-stage-b"></span>
+            <div class="fc-english" id="fc-eng"></div>
+            <div class="fc-divider"></div>
+            <div class="fc-roman" id="fc-rom"></div>
+            <div class="fc-literal" id="fc-lit"></div>
+            <div class="fc-nuance" id="fc-nua"></div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-actions">
+        <button class="btn danger" onclick="fcRate(false)">← Again</button>
+        <button class="btn" onclick="fcFlip()">Flip</button>
+        <button class="btn success" onclick="fcRate(true)">Got it →</button>
+      </div>
+      <div style="text-align:center;margin-top:12px;">
+        <button class="fc-shuffle" onclick="fcShuffle()">⟳ shuffle</button>
+      </div>
+    </div>
+
+    <!-- VOCAB BANK -->
+    <div id="vocab" class="panel">
+      <div class="page-header">
+        <div class="page-title">Vocab Bank</div>
+        <div class="page-sub">all words introduced — updated each stage</div>
+      </div>
+      <div class="bank-meta">
+        <span></span>
+        <span class="bank-count" id="bank-count"></span>
+      </div>
+      <div id="bank-content"></div>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="quiz" class="panel">
+      <div class="page-header">
+        <div class="page-title">Quiz</div>
+        <div class="page-sub">type the romanization or meaning — press enter to check</div>
+      </div>
+      <div class="quiz-meta">
+        <div class="quiz-stat"><div class="label">score</div><div class="val" id="q-score">0</div></div>
+        <div class="quiz-stat"><div class="label">total</div><div class="val" id="q-total">0</div></div>
+        <div class="quiz-stat"><div class="label">accuracy</div><div class="val" id="q-acc">—</div></div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="q-prog" style="width:0%"></div></div>
+      <div class="quiz-card">
+        <div class="quiz-type" id="q-type">sound</div>
+        <div class="quiz-q" id="q-q">—</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <input class="quiz-input" id="q-input" placeholder="your answer..." onkeydown="if(event.key==='Enter')checkQ()" autocomplete="off" />
+        <div class="quiz-actions">
+          <button class="btn primary" onclick="checkQ()">check →</button>
+          <button class="btn" onclick="nextQ()">skip</button>
+          <button class="btn" onclick="resetQ()">reset</button>
+        </div>
+        <div class="quiz-feedback" id="q-fb"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ─── NAV ───────────────────────────────────────
+function show(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ─── STREAK ────────────────────────────────────
+(function() {
+  const today = new Date().toDateString();
+  let data = JSON.parse(localStorage.getItem('kr-streak') || '{"streak":0,"last":""}');
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  if (data.last === today) {
+    // same day, no change
+  } else if (data.last === yesterday) {
+    data.streak++;
+    data.last = today;
+  } else if (data.last !== today) {
+    data.streak = 1;
+    data.last = today;
+  }
+  localStorage.setItem('kr-streak', JSON.stringify(data));
+  document.getElementById('streak-count').textContent = data.streak;
+})();
+
+// ─── KEYBOARD DATA ─────────────────────────────
+const keyRows = [
+  [{en:'`'},{en:'1'},{en:'2'},{en:'3'},{en:'4'},{en:'5'},{en:'6'},{en:'7'},{en:'8'},{en:'9'},{en:'0'},{en:'-'},{en:'='}],
+  [{en:'Q',ko:'ㅂ',sh:'ㅃ'},{en:'W',ko:'ㅈ',sh:'ㅉ'},{en:'E',ko:'ㄷ',sh:'ㄸ'},{en:'R',ko:'ㄱ',sh:'ㄲ'},{en:'T',ko:'ㅅ',sh:'ㅆ'},{en:'Y',ko:'ㅛ',v:1},{en:'U',ko:'ㅕ',v:1},{en:'I',ko:'ㅑ',v:1},{en:'O',ko:'ㅐ',sh:'ㅒ',v:1},{en:'P',ko:'ㅔ',sh:'ㅖ',v:1}],
+  [{en:'A',ko:'ㅁ'},{en:'S',ko:'ㄴ'},{en:'D',ko:'ㅇ'},{en:'F',ko:'ㄹ'},{en:'G',ko:'ㅎ'},{en:'H',ko:'ㅗ',v:1},{en:'J',ko:'ㅓ',v:1},{en:'K',ko:'ㅏ',v:1},{en:'L',ko:'ㅣ',v:1}],
+  [{en:'Z',ko:'ㅋ'},{en:'X',ko:'ㅌ'},{en:'C',ko:'ㅊ'},{en:'V',ko:'ㅍ'},{en:'B',ko:'ㅠ',v:1},{en:'N',ko:'ㅜ',v:1},{en:'M',ko:'ㅡ',v:1}]
+];
+
+let shiftOn = false;
+let selKey = null;
+
+function buildKB() {
+  const wrap = document.getElementById('kb-wrap');
+  wrap.innerHTML = '';
+  const mods = [
+    [{cls:'wider',label:'tab'}, null, {cls:'wide',label:'del'}],
+    [{cls:'widest',label:'caps'}, null, {cls:'wide',label:'return'}],
+    [{cls:'wider',label:'shift'}, null, {cls:'wider',label:'shift'}],
+    [{cls:'wide',label:'ctrl'}, null, {cls:'space-key',label:'space'}]
+  ];
+  keyRows.forEach((row, ri) => {
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'kb-row';
+    const leftMod = document.createElement('div');
+    leftMod.className = `key mod-key ${mods[ri][0].cls}`;
+    leftMod.innerHTML = `<span class="en">${mods[ri][0].label}</span>`;
+    rowDiv.appendChild(leftMod);
+    row.forEach(k => {
+      const div = document.createElement('div');
+      const isV = k.v;
+      div.className = 'key' + (isV ? ' vowel-key' : '');
+      const mainCh = shiftOn && k.sh ? k.sh : (k.ko || '');
+      const shiftCh = !shiftOn && k.sh ? k.sh : '';
+      if (shiftOn && k.sh) {
+        div.style.background = 'rgba(196,122,106,0.1)';
+        div.style.borderColor = 'rgba(196,122,106,0.35)';
+      }
+      div.innerHTML =
+        `<span class="en">${k.en}</span>` +
+        (mainCh ? `<span class="ko-main">${mainCh}</span>` : '') +
+        (shiftCh ? `<span class="ko-shift">${shiftCh}</span>` : '');
+      div.onclick = () => {
+        if (selKey) selKey.classList.remove('selected');
+        div.classList.add('selected');
+        selKey = div;
+      };
+      rowDiv.appendChild(div);
+    });
+    wrap.appendChild(rowDiv);
+  });
+}
+
+function setShift(on) {
+  shiftOn = on;
+  document.getElementById('btn-n').className = 'shift-btn' + (on ? '' : ' on');
+  document.getElementById('btn-s').className = 'shift-btn' + (on ? ' on' : '');
+  buildKB();
+}
+
+// ─── VOWEL DATA ────────────────────────────────
+const vBasic = [
+  {ch:'ㅏ',rom:'a',tip:'mouth wide open — "ah"'},
+  {ch:'ㅓ',rom:'eo',tip:'"uh" — mouth half open, relaxed'},
+  {ch:'ㅗ',rom:'o',tip:'"oh" — lips rounded'},
+  {ch:'ㅜ',rom:'u',tip:'"oo" — lips pushed forward'},
+  {ch:'ㅡ',rom:'eu',tip:'flat mouth, no English equivalent — "ugh" without g'},
+  {ch:'ㅣ',rom:'i',tip:'"ee" — same as Mandarin 衣'},
+  {ch:'ㅐ',rom:'ae',tip:'"eh" — merged with ㅔ in casual speech'},
+  {ch:'ㅔ',rom:'e',tip:'"eh" — merged with ㅐ in casual speech'},
+];
+const vY = [
+  {ch:'ㅑ',rom:'ya',tip:'ㅏ with y- onset'},
+  {ch:'ㅕ',rom:'yeo',tip:'ㅓ with y- onset'},
+  {ch:'ㅛ',rom:'yo',tip:'ㅗ with y- onset'},
+  {ch:'ㅠ',rom:'yu',tip:'ㅜ with y- onset'},
+  {ch:'ㅒ',rom:'yae',tip:'ㅐ with y- onset — rare'},
+  {ch:'ㅖ',rom:'ye',tip:'ㅔ with y- onset — used in 예요'},
+];
+const vC = [
+  {ch:'ㅘ',rom:'wa',tip:'ㅗ + ㅏ — lips round then open'},
+  {ch:'ㅙ',rom:'wae',tip:'ㅗ + ㅐ — "weh"'},
+  {ch:'ㅚ',rom:'oe',tip:'ㅗ + ㅣ — said as "weh" in casual speech'},
+  {ch:'ㅝ',rom:'wo / weo',tip:'ㅜ + ㅓ — "wuh"'},
+  {ch:'ㅞ',rom:'we',tip:'ㅜ + ㅔ — "weh"'},
+  {ch:'ㅟ',rom:'wi',tip:'ㅜ + ㅣ — "wee"'},
+  {ch:'ㅢ',rom:'ui',tip:'ㅡ + ㅣ — said "ee" casually; "ui" only in 의 particle'},
+];
+
+// ─── CONSONANT DATA ────────────────────────────
+const cBasic = [
+  {ch:'ㄱ',rom:'g / k',tip:'soft g at syllable start — k-sound at end or before consonant'},
+  {ch:'ㄴ',rom:'n',tip:'same as English n — never changes'},
+  {ch:'ㄷ',rom:'d / t',tip:'soft d at start — t-sound at end'},
+  {ch:'ㄹ',rom:'r / l',tip:'flap r between vowels — l at syllable end — no clean English equivalent'},
+  {ch:'ㅁ',rom:'m',tip:'same as English m'},
+  {ch:'ㅂ',rom:'b / p',tip:'soft b at start — p-sound at end'},
+  {ch:'ㅅ',rom:'s',tip:'s before vowels — unreleased t at end of syllable'},
+  {ch:'ㅇ',rom:'silent / ng',tip:'silent placeholder at syllable start — ng sound at syllable end like 방'},
+  {ch:'ㅈ',rom:'j',tip:'soft j — between j and ch'},
+  {ch:'ㅎ',rom:'h',tip:'h — softens or disappears in fast casual speech'},
+];
+const cAsp = [
+  {ch:'ㅊ',rom:'ch',tip:'aspirated ㅈ — puff of air. hold paper: it should flutter'},
+  {ch:'ㅋ',rom:'k',tip:'aspirated ㄱ — puff of air'},
+  {ch:'ㅌ',rom:'t',tip:'aspirated ㄷ — puff of air'},
+  {ch:'ㅍ',rom:'p',tip:'aspirated ㅂ — puff of air'},
+];
+const cTense = [
+  {ch:'ㄲ',rom:'kk',tip:'tense ㄱ — no air, held throat. 꽃 (flower), 꿈 (dream)'},
+  {ch:'ㄸ',rom:'tt',tip:'tense ㄷ — no air. 떡 (rice cake)'},
+  {ch:'ㅃ',rom:'pp',tip:'tense ㅂ — no air. 빨리 (quickly)'},
+  {ch:'ㅆ',rom:'ss',tip:'tense ㅅ — no air. appears in 있어요, 없어요'},
+  {ch:'ㅉ',rom:'jj',tip:'tense ㅈ — no air. 짜다 (salty / to be salty)'},
+];
+
+// ─── PATTERNS DATA ─────────────────────────────
+const patternsData = [
+  {
+    ko:'[명사] + 이에요',
+    rom:'[noun] + i-e-yo',
+    meaning:'[noun] is / am / are — use after a noun ending in a consonant (받침)',
+    note:'학생이에요 (I am a student) · 한국 사람이에요 (I am Korean)\nSame slot logic as 我是 in Mandarin. The subject (나/저) is dropped in casual speech — context carries it.\n받침 check: 학생 ends in ㅇ (consonant) → 이에요 ✓'
+  },
+  {
+    ko:'[명사] + 예요',
+    rom:'[noun] + ye-yo',
+    meaning:'[noun] is / am / are — use after a noun ending in a vowel (no 받침)',
+    note:'커피예요 (It is coffee) · 친구예요 (She is my friend)\n커피 ends in ㅣ (vowel, no 받침) → 예요 ✓\nFast speech: 이에요 and 예요 both get swallowed — sounds like "에요" or even "에"'
+  },
+  {
+    ko:'[verb stem] + 아요 / 어요',
+    rom:'[stem] + a-yo / eo-yo',
+    meaning:'present tense action — casual polite',
+    note:'먹어요 (eat) · 자요 (sleep) · 가요 (go) · 마셔요 (drink)\nRule: stem last vowel is ㅏ or ㅗ → 아요. Everything else → 어요.\nCasual drop: 아요/어요 → 아/어 with close friends. 먹어요 → 먹어.'
+  },
+  {
+    ko:'있어요',
+    rom:'i-sseo-yo',
+    meaning:'there is / I have — existence and possession in one word',
+    note:'시간 있어요? (Got time?) · 돈 있어요 (I have money)\nCovers both 有 (have) and 在 (exist) from Mandarin — same as Cantonese 有.\n없어요 is the direct opposite. These two are among the most-used words in Korean.'
+  },
+  {
+    ko:'없어요',
+    rom:'eop-seo-yo',
+    meaning:'there is not / I don\'t have',
+    note:'돈 없어요 (No money / I\'m broke) · 시간 없어요 (No time)\nLike 冇 in Cantonese — covers both non-existence and not having.\nCasual: 없어요 → 없어. Texting shorthand: 없음'
+  },
+];
+
+// ─── SENTENCES DATA ────────────────────────────
+const sentences = [
+  {en:'I am a student.',ko:'저는 학생이에요.',rom:'jeo-neun haek-saeng-i-e-yo',lit:'I (formal) + topic marker + student + is',nat:'I am a student.',nuance:'저는 is formal "I". With close friends use 나는 or drop the subject entirely. 학생 ends in ㅇ (받침) → 이에요.'},
+  {en:'This is coffee.',ko:'이거 커피예요.',rom:'i-geo keo-pi-ye-yo',lit:'this thing + coffee + is',nat:'This is coffee.',nuance:'이거 is casual "this" (이것 is textbook). 커피 ends in vowel ㅣ, no 받침 → 예요. No subject marker in casual speech.'},
+  {en:'He is my friend.',ko:'걔 제 친구예요.',rom:'gyae je chin-gu-ye-yo',lit:'that person + my (formal) + friend + is',nat:'He / she is my friend.',nuance:'걔 is casual for 그 아이 (that person) — very natural in speech. Korean has no gendered pronouns — 걔 covers he/she. 친구 ends in vowel ㅜ → 예요.'},
+  {en:'I eat.',ko:'먹어요.',rom:'meog-eo-yo',lit:'eat (present, polite)',nat:'I eat / I\'m eating.',nuance:'Subject dropped — totally normal. 먹다 stem is 먹, last vowel ㅓ → 어요. Casual with friends: 먹어. Texting: 먹음 or 먹는 중'},
+  {en:'I sleep.',ko:'자요.',rom:'ja-yo',lit:'sleep (present, polite)',nat:'I sleep / I\'m sleeping.',nuance:'자다 → stem 자, vowel ㅏ → 아요, but 자 + 아요 contracts to 자요. Common: 나 자 (casual) or 잘게 (I\'m gonna sleep — telling someone).'},
+  {en:'I go.',ko:'가요.',rom:'ga-yo',lit:'go (present, polite)',nat:'I\'m going / I go.',nuance:'가다 → 가 + 아요 → 가요. Also used as goodbye: 잘 가요 (go well — said to the person leaving). Casual: 가 or 갈게 (I\'ll go).'},
+  {en:'I have time.',ko:'시간 있어요.',rom:'si-gan i-sseo-yo',lit:'time + exists/have',nat:'I have time.',nuance:'No "I" needed — context is clear. 있어요 covers both possession and existence. Question: 시간 있어요? = Got time? Very common in daily conversation.'},
+  {en:'I don\'t have money.',ko:'돈 없어요.',rom:'don eop-seo-yo',lit:'money + doesn\'t exist/don\'t have',nat:'I don\'t have money / I\'m broke.',nuance:'돈 없어요 is extremely natural. Like Cantonese 冇錢. Casual: 돈 없어. Texting: 돈 없음. You\'ll use this often.'},
+  {en:'There is a cafe here.',ko:'여기 카페 있어요.',rom:'yeo-gi ka-pe i-sseo-yo',lit:'here + cafe + exists',nat:'There is a cafe here.',nuance:'여기 = here (casual). 거기 = there. 저기 = over there. 있어요 handles existence. Word order is flexible — 카페 여기 있어요 also works.'},
+  {en:'There is no problem.',ko:'문제 없어요.',rom:'mun-je eop-seo-yo',lit:'problem + doesn\'t exist',nat:'No problem / There\'s no problem.',nuance:'Used exactly like "no problem" in English — as a reassurance. 괜찮아요 (it\'s okay) is also used interchangeably. Casual: 문제 없어.'},
+];
+
+// ─── VOCAB DATA ────────────────────────────────
+const vocabData = [
+  // Pronouns
+  {stage:'Stage 1',korean:'저',roman:'jeo',english:'I (formal/polite)',literal:'I',type:'pronoun',nuance:'Use with people you don\'t know well. Switch to 나 with close friends.'},
+  {stage:'Stage 1',korean:'나',roman:'na',english:'I (casual)',literal:'I',type:'pronoun',nuance:'Casual. Use with close friends only.'},
+  {stage:'Stage 1',korean:'걔',roman:'gyae',english:'he / she (casual)',literal:'that kid',type:'pronoun',nuance:'Shortened from 그 애. Casual — sounds like how Koreans actually speak.'},
+  // Nouns
+  {stage:'Stage 1',korean:'사람',roman:'sa-ram',english:'person',literal:'person',type:'noun',nuance:''},
+  {stage:'Stage 1',korean:'말레이시아',roman:'mal-le-i-si-a',english:'Malaysia',literal:'Malaysia',type:'noun',nuance:'Vowel ending → 예요: 말레이시아예요.'},
+  {stage:'Stage 1',korean:'학생',roman:'hak-saeng',english:'student',literal:'student',type:'noun',nuance:'Consonant ending (ㅇ) → 이에요: 학생이에요.'},
+  {stage:'Stage 1',korean:'한국인',roman:'han-gu-gin',english:'Korean person',literal:'Korea-person',type:'noun',nuance:'Consonant ending (ㄴ) → 이에요.'},
+  {stage:'Stage 1',korean:'디자이너',roman:'di-ja-i-neo',english:'designer',literal:'designer',type:'noun',nuance:'Vowel ending → 예요: 디자이너예요.'},
+  {stage:'Stage 1',korean:'친구',roman:'chin-gu',english:'friend',literal:'friend',type:'noun',nuance:'Vowel ending → 예요.'},
+  {stage:'Stage 1',korean:'이거',roman:'i-geo',english:'this (thing)',literal:'this-thing',type:'noun',nuance:'Casual spoken form of 이것. Use freely in conversation.'},
+  {stage:'Stage 1',korean:'폰',roman:'pon',english:'phone',literal:'phone',type:'noun',nuance:'Consonant ending (ㄴ) → 이에요: 폰이에요.'},
+  {stage:'Stage 1',korean:'커피',roman:'keo-pi',english:'coffee',literal:'coffee',type:'noun',nuance:'Vowel ending → 예요: 커피예요. No space before 예요.'},
+  {stage:'Stage 1',korean:'시간',roman:'si-gan',english:'time',literal:'time',type:'noun',nuance:'시간 있어요? = Do you have time? One of the most useful phrases.'},
+  {stage:'Stage 1',korean:'돈',roman:'don',english:'money',literal:'money',type:'noun',nuance:'돈 없어요 = I\'m broke. Very natural and frequently used.'},
+  {stage:'Stage 1',korean:'집',roman:'jip',english:'home / house',literal:'house',type:'noun',nuance:'집에 있어요? = Are you home? One of the most texted phrases in Korean.'},
+  // Verbs (Stage 1)
+  {stage:'Stage 1',korean:'먹어요',roman:'meo-geo-yo',english:'eat / am eating',literal:'eat-do',type:'verb',nuance:'Dictionary: 먹다. Casual drop: 먹어. Covers both simple present and present continuous.'},
+  {stage:'Stage 1',korean:'가요',roman:'ga-yo',english:'go / am going',literal:'go-do',type:'verb',nuance:'Dictionary: 가다. Stem vowel is ㅏ → 아요, but contracts to 가요.'},
+  {stage:'Stage 1',korean:'자요',roman:'ja-yo',english:'sleep / am sleeping',literal:'sleep-do',type:'verb',nuance:'Dictionary: 자다. 자 + 아요 contracts to 자요. Casual: 자.'},
+  {stage:'Stage 1',korean:'좋아요',roman:'jo-a-yo',english:'I like it / it\'s good',literal:'good-is',type:'verb',nuance:'Functions as both "I like it" and "it\'s good." Context decides. Casual: 좋아.'},
+  {stage:'Stage 1',korean:'몰라요',roman:'mol-la-yo',english:'I don\'t know',literal:'don\'t-know',type:'verb',nuance:'From 모르다 (irregular). Don\'t rebuild it — memorize 몰라요 as a chunk. Casual: 몰라.'},
+  {stage:'Stage 1',korean:'있어요',roman:'i-sseo-yo',english:'have / there is',literal:'exists',type:'verb',nuance:'Like Cantonese 有. 시간 있어요 = I have time. 집에 있어요 = I\'m home. Casual: 있어.'},
+  {stage:'Stage 1',korean:'없어요',roman:'eop-sseo-yo',english:'don\'t have / there isn\'t',literal:'not-exists',type:'verb',nuance:'Like Cantonese 冇. 돈 없어요 = I\'m broke. Casual: 없어.'},
+
+  // Stage 2 — Adjectives (regular)
+  {stage:'Stage 2',korean:'작아요',roman:'ja-ga-yo',english:'small / it\'s small',literal:'small-is',type:'verb',nuance:'From 작다. Stem vowel ㅏ → 아요. Casual: 작아.'},
+  {stage:'Stage 2',korean:'비싸요',roman:'bi-ssa-yo',english:'expensive / it\'s expensive',literal:'expensive-is',type:'verb',nuance:'From 비싸다. Tense ㅆ — not ㅅ. Casual: 비싸.'},
+  {stage:'Stage 2',korean:'싸요',roman:'ssa-yo',english:'cheap / it\'s cheap',literal:'cheap-is',type:'verb',nuance:'From 싸다. Not 짜요 (salty). Casual: 싸.'},
+  {stage:'Stage 2',korean:'많아요',roman:'ma-na-yo',english:'there\'s a lot / many',literal:'many-is',type:'verb',nuance:'From 많다. ㄶ cluster — ㅎ disappears before vowel. Written 많아요, sounds like 마나요.'},
+
+  // Stage 2 — ㅡ irregular
+  {stage:'Stage 2',korean:'커요',roman:'keo-yo',english:'big / it\'s big',literal:'big-is',type:'verb',nuance:'From 크다. ㅡ irregular — ㅡ drops, stem becomes 크 → 커요.'},
+  {stage:'Stage 2',korean:'바빠요',roman:'ba-ppa-yo',english:'busy / I\'m busy',literal:'busy-is',type:'verb',nuance:'From 바쁘다. ㅡ drops, vowel before was ㅏ → 바빠요. First syllable is 바 (ba), not 비 (bi).'},
+  {stage:'Stage 2',korean:'예뻐요',roman:'ye-ppeo-yo',english:'pretty / it\'s pretty',literal:'pretty-is',type:'verb',nuance:'From 예쁘다. ㅡ drops → 예뻐요. 예 not 여. Second syllable is 뻐 (ppeo) not 빠 (ppa).'},
+  {stage:'Stage 2',korean:'나빠요',roman:'na-ppa-yo',english:'bad / it\'s bad',literal:'bad-is',type:'verb',nuance:'From 나쁘다. ㅡ drops, vowel before was ㅏ → 나빠요.'},
+
+  // Stage 2 — 하다 adjectives
+  {stage:'Stage 2',korean:'피곤해요',roman:'pi-gon-hae-yo',english:'tired / I\'m tired',literal:'tired-is',type:'verb',nuance:'From 피곤하다. 하다 → 해요. 피 is aspirated ㅍ, not ㅂ. 곤 has ㄴ받침.'},
+  {stage:'Stage 2',korean:'행복해요',roman:'haeng-bok-hae-yo',english:'happy / I\'m happy',literal:'happy-is',type:'verb',nuance:'From 행복하다. 하다 → 해요. 복 is ㅗ (bo), not ㅜ (bu).'},
+  {stage:'Stage 2',korean:'조용해요',roman:'jo-yong-hae-yo',english:'quiet / it\'s quiet',literal:'quiet-is',type:'verb',nuance:'From 조용하다. 하다 → 해요.'},
+  {stage:'Stage 2',korean:'복잡해요',roman:'bok-jap-hae-yo',english:'crowded / complicated',literal:'complicated-is',type:'verb',nuance:'From 복잡하다. Negation: 복잡 안 해요 (not 안 복잡해요). 하다 rule.'},
+];
+
+// ─── QUIZ DATA ─────────────────────────────────
+const quizData = [
+  {type:'sound',q:'ㅏ',a:['a'],hint:'mouth wide open'},
+  {type:'sound',q:'ㅓ',a:['eo'],hint:'"uh" — half open'},
+  {type:'sound',q:'ㅗ',a:['o'],hint:'rounded lips'},
+  {type:'sound',q:'ㅜ',a:['u'],hint:'lips forward'},
+  {type:'sound',q:'ㅡ',a:['eu'],hint:'flat mouth'},
+  {type:'sound',q:'ㅣ',a:['i'],hint:'"ee"'},
+  {type:'sound',q:'ㅐ',a:['ae'],hint:'merged with ㅔ in speech'},
+  {type:'sound',q:'ㅔ',a:['e'],hint:'merged with ㅐ in speech'},
+  {type:'sound',q:'ㅑ',a:['ya'],hint:'ㅏ with y-'},
+  {type:'sound',q:'ㅕ',a:['yeo'],hint:'ㅓ with y-'},
+  {type:'sound',q:'ㅛ',a:['yo'],hint:'ㅗ with y-'},
+  {type:'sound',q:'ㅠ',a:['yu'],hint:'ㅜ with y-'},
+  {type:'sound',q:'ㄱ',a:['g','k'],hint:'soft g at start'},
+  {type:'sound',q:'ㄴ',a:['n'],hint:'same as English'},
+  {type:'sound',q:'ㄷ',a:['d','t'],hint:'soft d at start'},
+  {type:'sound',q:'ㄹ',a:['r','l'],hint:'flap r between vowels'},
+  {type:'sound',q:'ㅁ',a:['m'],hint:'same as English'},
+  {type:'sound',q:'ㅂ',a:['b','p'],hint:'soft b at start'},
+  {type:'sound',q:'ㅅ',a:['s'],hint:'s before vowels'},
+  {type:'sound',q:'ㅎ',a:['h'],hint:'softens in fast speech'},
+  {type:'sound',q:'ㅊ',a:['ch'],hint:'aspirated — puff of air'},
+  {type:'sound',q:'ㅋ',a:['k'],hint:'aspirated ㄱ'},
+  {type:'sound',q:'ㅌ',a:['t'],hint:'aspirated ㄷ'},
+  {type:'sound',q:'ㅍ',a:['p'],hint:'aspirated ㅂ'},
+  {type:'sound',q:'ㄲ',a:['kk'],hint:'tense — no air burst'},
+  {type:'sound',q:'ㄸ',a:['tt'],hint:'tense ㄷ'},
+  {type:'sound',q:'ㅃ',a:['pp'],hint:'tense ㅂ'},
+  {type:'sound',q:'ㅆ',a:['ss'],hint:'tense — in 있어요'},
+  {type:'sound',q:'ㅉ',a:['jj'],hint:'tense ㅈ'},
+  {type:'meaning',q:'있어요',a:['there is','i have','have','exist'],hint:'existence / possession'},
+  {type:'meaning',q:'없어요',a:["there isn't","i don't have","don't have","no"],hint:'opposite of 있어요'},
+  {type:'meaning',q:'먹어요',a:['eat','i eat','eating'],hint:'먹다 → present polite'},
+  {type:'meaning',q:'가요',a:['go','i go','going'],hint:'가다 → present polite'},
+  {type:'meaning',q:'자요',a:['sleep','i sleep','sleeping'],hint:'자다 → present polite'},
+  {type:'meaning',q:'몰라요',a:["i don't know","don't know","no idea"],hint:'모르다 irregular → 몰라요'},
+  {type:'rule',q:'이에요 or 예요?\n학생___',a:['이에요'],hint:'학생 ends in ㅇ = consonant = 받침'},
+  {type:'rule',q:'이에요 or 예요?\n커피___',a:['예요'],hint:'커피 ends in ㅣ = vowel = no 받침'},
+  {type:'rule',q:'아요 or 어요?\n먹___',a:['어요'],hint:'먹 last vowel is ㅓ → 어요'},
+  {type:'rule',q:'아요 or 어요?\n가___',a:['아요'],hint:'가 last vowel is ㅏ → 아요 → contracts to 가요'},
+];
+
+// ─── BUILD CHAR GRIDS ──────────────────────────
+function buildCharGrid(id, data, extraClass) {
+  const el = document.getElementById(id);
+  el.innerHTML = data.map(d =>
+    `<div class="char-card ${extraClass||''}">
+      <div class="ch">${d.ch}</div>
+      <div class="rom">${d.rom}</div>
+      <div class="tip">${d.tip}</div>
+    </div>`
+  ).join('');
+}
+
+// ─── BUILD PATTERNS ────────────────────────────
+function buildPatterns() {
+  const el = document.getElementById('pattern-list');
+  el.innerHTML = patternsData.map(p =>
+    `<div class="pattern-card">
+      <div class="pattern-ko">${p.ko}</div>
+      <div class="pattern-rom">${p.rom}</div>
+      <div class="pattern-meaning">${p.meaning}</div>
+      <div class="pattern-note">${p.note.replace(/\n/g,'<br>')}</div>
+    </div>`
+  ).join('');
+}
+
+// ─── BUILD SENTENCES ───────────────────────────
+function buildSentences() {
+  const el = document.getElementById('sentence-list');
+  el.innerHTML = sentences.map(s =>
+    `<div class="sentence-card">
+      <div class="sentence-en">${s.en}</div>
+      <div class="sentence-ko">${s.ko}</div>
+      <div class="sentence-rom">${s.rom}</div>
+      <div class="sentence-row">
+        <span class="sentence-tag tag-lit">literal: ${s.lit}</span>
+      </div>
+      <div class="sentence-row">
+        <span class="sentence-tag tag-nat">natural: ${s.nat}</span>
+      </div>
+      <div class="sentence-nuance">${s.nuance}</div>
+    </div>`
+  ).join('');
+}
+
+// ─── FLASHCARDS ────────────────────────────────
+let fcDeck = [];
+let fcIndex = 0;
+let fcCurrentFilter = 'all';
+
+function fcBuildDeck(filter) {
+  if (filter === 'all') fcDeck = [...vocabData];
+  else fcDeck = vocabData.filter(v => v.type === filter);
+  fcIndex = 0;
+}
+
+function fcRender() {
+  if (!fcDeck.length) return;
+  const card = fcDeck[fcIndex];
+  document.getElementById('fc-stage').textContent = card.stage;
+  document.getElementById('fc-stage-b').textContent = card.stage;
+  document.getElementById('fc-type').textContent = card.type;
+  document.getElementById('fc-kor').textContent = card.korean;
+  document.getElementById('fc-eng').textContent = card.english;
+  document.getElementById('fc-rom').textContent = card.roman;
+  document.getElementById('fc-lit').textContent = card.literal ? `"${card.literal}"` : '';
+  document.getElementById('fc-nua').textContent = card.nuance || '';
+  document.getElementById('fc-prog').textContent = `Card ${fcIndex + 1} of ${fcDeck.length}`;
+  document.getElementById('fc-scene').classList.remove('flipped');
+}
+
+function fcFlip() {
+  document.getElementById('fc-scene').classList.toggle('flipped');
+}
+
+function fcFilter(filter, btn) {
+  fcCurrentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  fcBuildDeck(filter);
+  fcRender();
+}
+
+function fcRate(correct) {
+  if (!correct) {
+    const card = fcDeck.splice(fcIndex, 1)[0];
+    fcDeck.push(card);
+  } else {
+    fcIndex = (fcIndex + 1) % fcDeck.length;
+  }
+  document.getElementById('fc-scene').classList.remove('flipped');
+  setTimeout(fcRender, 80);
+}
+
+function fcShuffle() {
+  for (let i = fcDeck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [fcDeck[i], fcDeck[j]] = [fcDeck[j], fcDeck[i]];
+  }
+  fcIndex = 0;
+  fcRender();
+}
+
+// ─── VOCAB BANK ────────────────────────────────
+function buildVocabBank() {
+  const stages = [...new Set(vocabData.map(v => v.stage))];
+  const container = document.getElementById('bank-content');
+  document.getElementById('bank-count').textContent = `${vocabData.length} words total`;
+
+  container.innerHTML = stages.map(stage => {
+    const words = vocabData.filter(v => v.stage === stage);
+    return `
+      <div class="bank-stage">
+        <div class="bank-stage-label">${stage} — ${words.length} words</div>
+        <table class="vocab-table">
+          <thead>
+            <tr>
+              <th>Korean</th>
+              <th>Romanization</th>
+              <th>English</th>
+              <th>Literal</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${words.map(w => `
+              <tr>
+                <td class="td-kor">${w.korean}</td>
+                <td class="td-rom">${w.roman}</td>
+                <td class="td-eng">${w.english}</td>
+                <td class="td-lit">${w.literal}</td>
+                <td><span class="type-badge badge-${w.type}">${w.type}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }).join('');
+}
+
+// ─── QUIZ ──────────────────────────────────────
+let qi = 0, qs = 0, qt = 0, qData = [];
+
+function shuffleQ() {
+  qData = [...quizData].sort(() => Math.random() - 0.5);
+  qi = 0;
+}
+
+function showQ() {
+  if (qi >= qData.length) shuffleQ();
+  const q = qData[qi];
+  document.getElementById('q-type').textContent = q.type === 'sound' ? 'romanization' : q.type === 'meaning' ? 'meaning' : 'grammar rule';
+  const qEl = document.getElementById('q-q');
+  qEl.textContent = q.q;
+  qEl.className = 'quiz-q' + (q.q.length < 4 ? ' big' : '');
+  document.getElementById('q-input').value = '';
+  document.getElementById('q-fb').textContent = '';
+  document.getElementById('q-input').focus();
+}
+
+function checkQ() {
+  const inp = document.getElementById('q-input').value.trim().toLowerCase();
+  if (!inp) return;
+  const q = qData[qi];
+  const correct = q.a.some(a => a.toLowerCase() === inp);
+  qt++;
+  if (correct) qs++;
+  const acc = qt > 0 ? Math.round((qs / qt) * 100) : 0;
+  document.getElementById('q-score').textContent = qs;
+  document.getElementById('q-total').textContent = qt;
+  document.getElementById('q-acc').textContent = acc + '%';
+  document.getElementById('q-prog').style.width = acc + '%';
+  document.getElementById('q-fb').innerHTML = correct
+    ? `<span class="correct">correct.</span>`
+    : `<span class="wrong">wrong — ${q.a[0]}. ${q.hint}.</span>`;
+  setTimeout(() => { qi++; showQ(); }, correct ? 900 : 1800);
+}
+
+function nextQ() { qi++; showQ(); }
+function resetQ() {
+  qs = 0; qt = 0;
+  document.getElementById('q-score').textContent = 0;
+  document.getElementById('q-total').textContent = 0;
+  document.getElementById('q-acc').textContent = '—';
+  document.getElementById('q-prog').style.width = '0%';
+  shuffleQ(); showQ();
+}
+
+// ─── INIT ──────────────────────────────────────
+buildKB();
+buildCharGrid('vb', vBasic, 'vowel-card');
+buildCharGrid('vy', vY, 'vowel-card');
+buildCharGrid('vc', vC, 'vowel-card');
+buildCharGrid('cb', cBasic, '');
+buildCharGrid('ca', cAsp, '');
+buildCharGrid('ct', cTense, 'tense-card');
+buildPatterns();
+buildSentences();
+fcBuildDeck('all');
+fcRender();
+buildVocabBank();
+shuffleQ();
+showQ();
+</script>
+</body>
+</html>
